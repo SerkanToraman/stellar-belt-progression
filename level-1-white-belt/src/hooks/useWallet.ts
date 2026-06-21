@@ -19,6 +19,7 @@ export function useWallet() {
   const [loadingBalances, setLoadingBalances] = useState(false)
   const [loadingHistory, setLoadingHistory] = useState(false)
   const [error, setError] = useState('')
+  const [errorType, setErrorType] = useState<'connection' | 'transaction' | 'fund'>('transaction')
   const [txResult, setTxResult] = useState<TxResult | null>(null)
   const [history, setHistory] = useState<TxHistoryItem[]>([])
 
@@ -57,6 +58,7 @@ export function useWallet() {
     try {
       const installed = await checkFreighterInstalled()
       if (!installed) {
+        setErrorType('connection')
         setError(
           'Freighter wallet not found. Please install Freighter browser extension from freighter.app'
         )
@@ -67,6 +69,7 @@ export function useWallet() {
       await fetchBalances(key)
       await fetchHistory(key)
     } catch (err: unknown) {
+      setErrorType('connection')
       setError(err instanceof Error ? err.message : 'Failed to connect wallet')
     } finally {
       setLoading('')
@@ -91,9 +94,11 @@ export function useWallet() {
         await fetchHistory(publicKey)
         setTxResult({ success: true, hash: 'Funded via Friendbot' })
       } else {
+        setErrorType('fund')
         setError('Friendbot funding failed. Account may already be funded.')
       }
     } catch (err: unknown) {
+      setErrorType('fund')
       setError(err instanceof Error ? err.message : 'Failed to fund account')
     } finally {
       setLoading('')
@@ -115,9 +120,11 @@ export function useWallet() {
         await fetchBalances(publicKey)
         await fetchHistory(publicKey)
       } else {
+        setErrorType('transaction')
         setError(result.error || 'Transaction failed')
       }
     } catch (err: unknown) {
+      setErrorType('transaction')
       setError(err instanceof Error ? err.message : 'Transaction failed')
     } finally {
       setLoading('')
@@ -142,6 +149,7 @@ export function useWallet() {
     loadingBalances,
     loadingHistory,
     error,
+    errorType,
     txResult,
     history,
     handleConnect,

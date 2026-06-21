@@ -14,6 +14,7 @@ function App() {
     loadingBalances,
     loadingHistory,
     error,
+    errorType,
     txResult,
     history,
     handleConnect,
@@ -31,7 +32,7 @@ function App() {
           loading={loading}
           onConnect={handleConnect}
         />
-        <StatusMessage error={error} txResult={txResult} onClose={clearStatus} />
+        <StatusMessage error={error} errorType={errorType} txResult={txResult} onClose={clearStatus} />
       </>
     )
   }
@@ -48,7 +49,7 @@ function App() {
       />
       <SendXlm loading={loading} onSend={handleSend} />
       <TransactionHistory history={history} publicKey={publicKey} loading={loadingHistory} />
-      <StatusMessage error={error} txResult={txResult} onClose={clearStatus} />
+      <StatusMessage error={error} errorType={errorType} txResult={txResult} onClose={clearStatus} />
 
       <div
         style={{

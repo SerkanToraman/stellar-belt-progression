@@ -3,11 +3,18 @@ import StellarLogo from './StellarLogo'
 
 interface StatusMessageProps {
   error: string
+  errorType: 'connection' | 'transaction' | 'fund'
   txResult: TxResult | null
   onClose: () => void
 }
 
-export default function StatusMessage({ error, txResult, onClose }: StatusMessageProps) {
+const ERROR_TITLES: Record<string, string> = {
+  connection: 'Connection Failed',
+  transaction: 'Transaction Failed',
+  fund: 'Funding Failed',
+}
+
+export default function StatusMessage({ error, errorType, txResult, onClose }: StatusMessageProps) {
   const showPopup = error || txResult?.success
   if (!showPopup) return null
 
@@ -74,7 +81,9 @@ export default function StatusMessage({ error, txResult, onClose }: StatusMessag
                 <span className="popup-error-x">!</span>
               </div>
 
-              <h3 className="popup-title popup-title-error">Transaction Failed</h3>
+              <h3 className="popup-title popup-title-error">
+                {ERROR_TITLES[errorType]}
+              </h3>
               <p className="popup-subtitle">{error}</p>
 
               <button className="btn btn-primary popup-btn" onClick={onClose}>
